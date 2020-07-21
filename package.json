@@ -1,5 +1,5 @@
 {
-  "name": "create-server",
+  "name": "@cush/create-server",
   "version": "1.0.2",
   "description": "Create a pre-configured HTTP server",
   "main": "index.js",
