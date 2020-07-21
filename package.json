@@ -1,17 +1,14 @@
 {
   "name": "@cush/create-server",
   "version": "1.0.2",
-  "description": "Create a pre-configured HTTP server",
+  "description": "Fork of 'create-server' with TypeScript support",
   "main": "index.js",
   "scripts": {
     "coverage": "istanbul cover _mocha",
     "test": "mocha test/*.test.js",
     "test-travis": "istanbul cover _mocha --report lcovonly"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/primus/create-server"
-  },
+  "repository": "aleclarson/create-server",
   "keywords": [
     "create",
     "server",
@@ -23,13 +20,12 @@
     "create-servers"
   ],
   "author": "Arnout Kazemier",
+  "maintainers": [
+    "Alec Larson (https://github.com/aleclarson)"
+  ],
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/primus/create-server/issues"
-  },
-  "homepage": "https://github.com/primus/create-server",
   "dependencies": {
-    "connected": "~0.0.2"
+    "connected": "0.0.2"
   },
   "devDependencies": {
     "@types/node": "^14.0.24",
