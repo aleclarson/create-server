@@ -202,3 +202,4 @@ create.fns = function fns(fn) {
 // Expose the create server method.
 //
 module.exports = create;
+create.default = create;
