@@ -1,6 +1,6 @@
 {
   "name": "@cush/create-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Fork of 'create-server' with TypeScript support",
   "main": "index.js",
   "scripts": {
