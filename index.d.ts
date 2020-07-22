@@ -41,3 +41,5 @@ export interface ServerEvents {
 export interface IncomingMessage extends http.IncomingMessage {
   url: string
 }
+
+export interface ServerResponse extends http.ServerResponse {}
