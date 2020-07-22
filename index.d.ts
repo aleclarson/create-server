@@ -29,15 +29,15 @@ export interface ServerOptions extends TlsOptions {
 
 export interface ServerEvents {
   close?: () => void
-  request?: (req: http.IncomingMessage, res: http.ServerResponse) => void
+  request?: (req: IncomingMessage, res: http.ServerResponse) => void
   listening?: (error?: Error) => void
-  upgrade?: (
-    response: http.IncomingMessage,
-    socket: Socket,
-    head: Buffer
-  ) => void
+  upgrade?: (req: IncomingMessage, socket: Socket, head: Buffer) => void
   error?: (error: Error) => void
   http?: () => void
   https?: () => void
   spdy?: () => void
+}
+
+export interface IncomingMessage extends http.IncomingMessage {
+  url: string
 }
