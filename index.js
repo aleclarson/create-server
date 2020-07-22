@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
-var listen = require('connected')
-  , parse = require('url').parse
-  , path = require('path')
-  , fs = require('fs');
+var listen = require('connected'),
+  parse = require('url').parse,
+  path = require('path'),
+  fs = require('fs')
 
 /**
  * Get an accurate type check for the given Object.
@@ -13,7 +13,7 @@ var listen = require('connected')
  * @api public
  */
 function is(obj) {
-  return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
+  return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase()
 }
 
 /**
@@ -24,33 +24,33 @@ function is(obj) {
  * @returns {Server} The created server.
  */
 function create(server, fn) {
-  var type = is(server)
-    , options;
+  let type = is(server)
+  let options
 
-  if ('object' === type) options = server;
-  else if ('number' === type) options = { port: server };
-  else options = {};
+  if ('object' === type) options = server
+  else if ('number' === type) options = { port: server }
+  else options = {}
 
-  fn = create.fns(fn || options);
+  fn = create.fns(fn || options)
 
-  var certs = options.key && options.cert       // Check HTTPS certs.
-    , hostname = options.hostname               // Bind address.
-    , port = options.port || 443                // Force HTTPS by default.
-    , secure = certs || 443 === port            // Check for true HTTPS.
-    , spdy = 'spdy' in options;                 // Or are we spdy.
+  let certs = options.key && options.cert // Check HTTPS certs.
+  let hostname = options.hostname // Bind address.
+  let port = options.port || 443 // Force HTTPS by default.
+  let secure = certs || 443 === port // Check for true HTTPS.
+  let spdy = 'spdy' in options // Or are we spdy.
 
   //
   // Determine which type of server we need to create.
   //
-  if (spdy) type = 'spdy';
-  else if (secure) type = 'https';
-  else type = 'http';
+  if (spdy) type = 'spdy'
+  else if (secure) type = 'https'
+  else type = 'http'
 
   //
   // We need to have SSL certs for SPDY and secure servers.
   //
   if ((secure || spdy) && !certs) {
-    throw new Error('Missing the SSL key or certificate files in the options.');
+    throw new Error('Missing the SSL key or certificate files in the options.')
   }
 
   //
@@ -59,19 +59,21 @@ function create(server, fn) {
   // readable interface for SSL.
   //
   if (secure && options.root) {
-    ['cert', 'key', 'ca', 'pfx', 'crl'].filter(function filter(key) {
-      return key in options;
-    }).forEach(function parse(key) {
-      var data = options[key];
+    ;['cert', 'key', 'ca', 'pfx', 'crl']
+      .filter(function filter(key) {
+        return key in options
+      })
+      .forEach(function parse(key) {
+        const data = options[key]
 
-      if (Array.isArray(data)) {
-        options[key] = data.map(function read(file) {
-          return fs.readFileSync(path.join(options.root, file));
-        });
-      } else {
-        options[key] = fs.readFileSync(path.join(options.root, data));
-      }
-    });
+        if (Array.isArray(data)) {
+          options[key] = data.map(function read(file) {
+            return fs.readFileSync(path.join(options.root, file))
+          })
+        } else {
+          options[key] = fs.readFileSync(path.join(options.root, data))
+        }
+      })
   }
 
   //
@@ -82,93 +84,106 @@ function create(server, fn) {
     //
     // Protection against POODLE attacks.
     //
-    options.secureProtocol = options.secureProtocol || 'SSLv23_method';
-    options.secureOptions = options.secureOptions || require('constants').SSL_OP_NO_SSLv3;
+    options.secureProtocol = options.secureProtocol || 'SSLv23_method'
+    options.secureOptions =
+      options.secureOptions || require('constants').SSL_OP_NO_SSLv3
 
     //
     // Optimized cipher list.
     //
-    options.ciphers = options.ciphers || [
-      'ECDHE-RSA-AES256-SHA384',
-      'DHE-RSA-AES256-SHA384',
-      'ECDHE-RSA-AES256-SHA256',
-      'DHE-RSA-AES256-SHA256',
-      'ECDHE-RSA-AES128-SHA256',
-      'DHE-RSA-AES128-SHA256',
-      'HIGH',
-      '!aNULL',
-      '!eNULL',
-      '!EXPORT',
-      '!DES',
-      '!RC4',
-      '!MD5',
-      '!PSK',
-      '!SRP',
-      '!CAMELLIA'
-    ].join(':');
+    options.ciphers =
+      options.ciphers ||
+      [
+        'ECDHE-RSA-AES256-SHA384',
+        'DHE-RSA-AES256-SHA384',
+        'ECDHE-RSA-AES256-SHA256',
+        'DHE-RSA-AES256-SHA256',
+        'ECDHE-RSA-AES128-SHA256',
+        'DHE-RSA-AES128-SHA256',
+        'HIGH',
+        '!aNULL',
+        '!eNULL',
+        '!EXPORT',
+        '!DES',
+        '!RC4',
+        '!MD5',
+        '!PSK',
+        '!SRP',
+        '!CAMELLIA',
+      ].join(':')
   }
 
   //
   // Create the correct server instance and pass in the options object for those
   // who require it (spoiler: all non http servers).
   //
-  server = require(type).createServer('http' !== type ? options : undefined);
+  server = require(type).createServer('http' !== type ? options : undefined)
 
   //
   // Setup an addition redirect server which redirects people to the correct
   // HTTP or HTTPS server.
   //
   if (+options.redirect) {
-    var redirect = require('http').createServer(function handle(req, res) {
-      res.statusCode = 404;
+    const redirect = require('http')
+      .createServer(function handle(req, res) {
+        res.statusCode = 404
 
-      if (req.headers.host) {
-        var url = parse('http://'+ req.headers.host);
+        if (req.headers.host) {
+          const url = parse('http://' + req.headers.host)
 
-        res.statusCode = 301;
-        res.setHeader(
-          'Location',
-          'http'+ (secure ? 's' : '') +'://'+ url.hostname +':'+ port + req.url
-        );
-      }
+          res.statusCode = 301
+          res.setHeader(
+            'Location',
+            'http' +
+              (secure ? 's' : '') +
+              '://' +
+              url.hostname +
+              ':' +
+              port +
+              req.url
+          )
+        }
 
-      if (secure) res.setHeader(
-        'Strict-Transport-Security',
-        'max-age=8640000; includeSubDomains'
-      );
+        if (secure)
+          res.setHeader(
+            'Strict-Transport-Security',
+            'max-age=8640000; includeSubDomains'
+          )
 
-      res.end('');
-    }).listen(+options.redirect, hostname);
+        res.end('')
+      })
+      .listen(+options.redirect, hostname)
 
     //
     // Close the redirect server when the main server is closed.
     //
     server.once('close', function close() {
-      try { redirect.close(); }
-      catch (e) {}
-    });
+      try {
+        redirect.close()
+      } catch (e) {}
+    })
   }
 
   //
   // Assign the last callbacks.
   //
-  if (fn.close) server.once('close', fn.close);
-  ['request', 'upgrade', 'error'].forEach(function each(event) {
-    if (fn[event]) server.on(event, fn[event]);
-  });
+  if (fn.close) server.once('close', fn.close)
+  ;['request', 'upgrade', 'error'].forEach(function each(event) {
+    if (fn[event]) server.on(event, fn[event])
+  })
 
   //
   // Things are completed, call callback.
   //
-  if (fn[type]) fn[type]();
+  if (fn[type]) fn[type]()
 
   if (options.listen !== false) {
-    listen(server, port, hostname, fn.listening);
+    listen(server, port, hostname, fn.listening)
   } else if (fn.listening) {
-    server.once('listening', fn.listening);
+    server.once('listening', fn.listening)
   }
 
-  return server;
+  return server
 }
 
 /**
@@ -179,27 +194,33 @@ function create(server, fn) {
  * @api private
  */
 create.fns = function fns(fn) {
-  var callbacks = {};
+  var callbacks = {}
 
   if ('function' === typeof fn) {
-    callbacks.listening = fn;
-    return callbacks;
+    callbacks.listening = fn
+    return callbacks
   }
 
-  [
-    'close', 'request', 'listening', 'upgrade', 'error',
-    'http', 'https', 'spdy'
+  ;[
+    'close',
+    'request',
+    'listening',
+    'upgrade',
+    'error',
+    'http',
+    'https',
+    'spdy',
   ].forEach(function each(name) {
-    if ('function' !== typeof fn[name]) return;
+    if ('function' !== typeof fn[name]) return
 
-    callbacks[name] = fn[name];
-  });
+    callbacks[name] = fn[name]
+  })
 
-  return callbacks;
-};
+  return callbacks
+}
 
 //
 // Expose the create server method.
 //
-module.exports = create;
-create.default = create;
+module.exports = create
+create.default = create
