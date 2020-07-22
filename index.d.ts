@@ -3,12 +3,14 @@ import { Socket } from 'net'
 import { TlsOptions } from 'tls'
 
 declare const createServer: {
-  (options: ServerOptions & ServerEvents): http.Server
-  (options: ServerOptions, events: ServerEvents): http.Server
-  (port: number, events?: ServerEvents): http.Server
+  (options: ServerOptions & ServerEvents): Server
+  (options: ServerOptions, events: ServerEvents): Server
+  (port: number, events?: ServerEvents): Server
 }
 
 export default createServer
+
+export type Server = http.Server
 
 export interface ServerOptions extends TlsOptions {
   port?: number
