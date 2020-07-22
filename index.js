@@ -183,6 +183,14 @@ function create(server, fn) {
     server.once('listening', fn.listening)
   }
 
+  server.url =
+    'http' +
+    (type == 'http' ? '' : 's') +
+    '://' +
+    (hostname || 'localhost') +
+    ':' +
+    port
+
   return server
 }
 

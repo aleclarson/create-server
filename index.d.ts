@@ -10,7 +10,9 @@ declare const createServer: {
 
 export default createServer
 
-export type Server = http.Server
+export interface Server extends http.Server {
+  url: string
+}
 
 export interface ServerOptions extends TlsOptions {
   port?: number
