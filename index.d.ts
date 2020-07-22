@@ -18,7 +18,7 @@ export interface ServerOptions extends TlsOptions {
   /** Listen automatically */
   listen?: boolean
   /** Enable the SPDY protocol */
-  spdy?: true
+  spdy?: boolean | ServerEvents['spdy']
   /** Root directory for SSL key/cert path resolution */
   root?: string
 }
